@@ -1,5 +1,7 @@
 package scoreboard;
 
+import java.util.Objects;
+
 class Match implements MatchInterface {
 
     private String homeTeamName;
@@ -28,4 +30,16 @@ class Match implements MatchInterface {
         return awayTeamScore;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Match match = (Match) o;
+        return Objects.equals(homeTeamName, match.homeTeamName) && Objects.equals(awayTeamName, match.awayTeamName) && Objects.equals(homeTeamScore, match.homeTeamScore) && Objects.equals(awayTeamScore, match.awayTeamScore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(homeTeamName, awayTeamName, homeTeamScore, awayTeamScore);
+    }
 }
