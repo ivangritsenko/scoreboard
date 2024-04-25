@@ -5,16 +5,20 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static scoreboard.ExceptionMessages.*;
+
 class CreateMatchTest {
 
     @Test
     void givenScoreboard_whenCreateMatchWithNullArg_thenExceptionIsThrown() {
         Scoreboard scoreboard = new Scoreboard();
-        String exceptionMessage = "Team name must no be null";
+        String expectedExceptionMessage = TEAM_NAME_IS_NULL;
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(null, null), exceptionMessage);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(null, ""), exceptionMessage);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch("", null), exceptionMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(null, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(null, ""));
+        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> scoreboard.newMatch("", null)).getMessage();
+        Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }
 
     @Test
@@ -29,22 +33,23 @@ class CreateMatchTest {
         scoreboard.newMatch(teamA, teamB);
         scoreboard.newMatch(teamC, teamD);
 
-        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getMatchedInProgress());
+        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getOngoingMatches());
     }
 
     @Test
     void givenScoreboard_whenCreateMatchThatIsAlreadyCreated_thenExceptionIsThrown() {
         String teamA = "TeamA";
         String teamB = "TeamB";
-        String exceptionMessage = "Match is already created";
+        String expectedExceptionMessage = String.format(MATCH_ALREADY_EXIST, teamA, teamB);
         Scoreboard scoreboard = new Scoreboard();
         List<Match> expectedOngoingMatches = List.of(new Match(teamA, teamB));
         Runnable createMatchRunnable = () -> scoreboard.newMatch(teamA, teamB);
 
         createMatchRunnable.run();
 
-        Assertions.assertThrows(IllegalArgumentException.class, createMatchRunnable::run, exceptionMessage);
-        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getMatchedInProgress());
+        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class, createMatchRunnable::run).getMessage();
+        Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
+        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getOngoingMatches());
     }
 
     @Test
@@ -52,13 +57,14 @@ class CreateMatchTest {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
-        String exceptionMessage = String.format("Cannot create new match for the team %s because it already has ongoing match", teamB);
+        String expectedExceptionMessage = String.format(TEAM_ALREADY_HAS_ONGOING_MATCH, teamB);
         Scoreboard scoreboard = new Scoreboard();
         List<Match> expectedOngoingMatches = List.of(new Match(teamA, teamB));
 
         scoreboard.newMatch(teamA, teamB);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(teamB, teamC), exceptionMessage);
-        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getMatchedInProgress());
+        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.newMatch(teamB, teamC)).getMessage();
+        Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
+        Assertions.assertEquals(expectedOngoingMatches, scoreboard.getOngoingMatches());
     }
 }

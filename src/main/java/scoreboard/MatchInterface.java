@@ -5,11 +5,14 @@
  */
 package scoreboard;
 
+import java.util.Date;
+
 public interface MatchInterface {
 
     String getHomeTeamName();
     String getAwayTeamName();
     Integer getHomeTeamScore();
     Integer getAwayTeamScore();
+    Date getCreatedOn();
 
 }

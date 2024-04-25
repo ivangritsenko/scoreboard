@@ -1,8 +1,11 @@
 package scoreboard;
 
+import java.util.Date;
 import java.util.Objects;
 
 class Match implements MatchInterface {
+
+    private final Date createdOn = new Date();
 
     private String homeTeamName;
     private String awayTeamName;
@@ -28,6 +31,11 @@ class Match implements MatchInterface {
 
     public Integer getAwayTeamScore() {
         return awayTeamScore;
+    }
+
+    @Override
+    public Date getCreatedOn() {
+        return Date.from(createdOn.toInstant());
     }
 
     @Override
