@@ -18,7 +18,7 @@ class FinishMatchTest {
         String teamC = "TeamC";
         String teamD = "TeamD";
         Scoreboard scoreboard = new Scoreboard();
-        String expectedExceptionMessage = MATCH_DOES_NOT_EXIST;
+        String expectedExceptionMessage = String.format(MATCH_DOES_NOT_EXIST, teamC, teamD);
         List<Match> expectedOngoingMatches = List.of(new Match(teamA, teamB));
 
         scoreboard.newMatch(teamA, teamB);
