@@ -50,4 +50,15 @@ class Match implements MatchInterface {
     public int hashCode() {
         return Objects.hash(homeTeamName, awayTeamName, homeTeamScore, awayTeamScore);
     }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "createdOn=" + createdOn +
+                ", homeTeamName='" + homeTeamName + '\'' +
+                ", awayTeamName='" + awayTeamName + '\'' +
+                ", homeTeamScore=" + homeTeamScore +
+                ", awayTeamScore=" + awayTeamScore +
+                '}';
+    }
 }

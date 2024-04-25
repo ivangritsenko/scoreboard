@@ -56,7 +56,14 @@ class Scoreboard implements ScoreboardInterface {
 
     @Override
     public void finishMatch(String homeTeamName, String awayTeamName) {
+        checkForNullArguments(homeTeamName, awayTeamName);
 
+        Match requestedToFinishMatch = ongoingMatches.stream()
+                .filter(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) && match.getAwayTeamName().equalsIgnoreCase(awayTeamName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(MATCH_DOES_NOT_EXIST));
+
+        ongoingMatches.remove(requestedToFinishMatch);
     }
 
     @Override
