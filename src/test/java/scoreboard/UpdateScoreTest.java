@@ -50,5 +50,43 @@ class UpdateScoreTest {
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }
 
+    @Test
+    void givenScoreboardWithAMatch_whenUpdateScoreForTheMatch_thenScoreIsUpdated() {
+        String teamA = "TeamA";
+        String teamB = "TeamB";
+        Scoreboard scoreboard = new Scoreboard();
+        int expectedHomeTeamScore = 1;
+        int expectedAwayTeamScore = 3;
 
+        scoreboard.newMatch(teamA, teamB);
+        scoreboard.updateScore(teamA, expectedHomeTeamScore, teamB, expectedAwayTeamScore);
+        MatchInterface match = scoreboard.getOngoingMatches().get(0);
+
+        Assertions.assertEquals(expectedHomeTeamScore, match.getHomeTeamScore());
+        Assertions.assertEquals(expectedAwayTeamScore, match.getAwayTeamScore());
+    }
+
+    @Test
+    void givenScoreboardWithAMatch_whenDecreaseScoreForTheMatch_thenScoreIsUpdated() {
+        String teamA = "TeamA";
+        String teamB = "TeamB";
+        Scoreboard scoreboard = new Scoreboard();
+        int expectedHomeTeamScore = 1;
+        int expectedAwayTeamScore = 3;
+
+        //Init match and update score
+        scoreboard.newMatch(teamA, teamB);
+        scoreboard.updateScore(teamA, expectedHomeTeamScore + 2, teamB, expectedAwayTeamScore + 2);
+        MatchInterface matchWithUpdatedScore = scoreboard.getOngoingMatches().get(0);
+
+        Assertions.assertEquals(expectedHomeTeamScore + 2, matchWithUpdatedScore.getHomeTeamScore());
+        Assertions.assertEquals(expectedAwayTeamScore + 2, matchWithUpdatedScore.getAwayTeamScore());
+
+        //Decrease score
+        scoreboard.updateScore(teamA, expectedHomeTeamScore, teamB, expectedAwayTeamScore);
+        MatchInterface matchWithDecreasedScore = scoreboard.getOngoingMatches().get(0);
+
+        Assertions.assertEquals(expectedHomeTeamScore, matchWithDecreasedScore.getHomeTeamScore());
+        Assertions.assertEquals(expectedAwayTeamScore, matchWithDecreasedScore.getAwayTeamScore());
+    }
 }
