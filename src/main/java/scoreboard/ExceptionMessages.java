@@ -7,5 +7,6 @@ public class ExceptionMessages {
     public static final String TEAM_ALREADY_HAS_ONGOING_MATCH = "Cannot create new match for the team %s because it already has ongoing match";
 
     public static final String MATCH_DOES_NOT_EXIST = "Match %s - %s doesn't exist";
+    public static final String SCORE_CANNOT_BE_NEGATIVE = "Score cannot be negative";
 
 }
