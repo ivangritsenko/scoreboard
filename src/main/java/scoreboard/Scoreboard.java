@@ -61,7 +61,7 @@ class Scoreboard implements ScoreboardInterface {
         Match requestedToFinishMatch = ongoingMatches.stream()
                 .filter(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) && match.getAwayTeamName().equalsIgnoreCase(awayTeamName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(MATCH_DOES_NOT_EXIST));
+                .orElseThrow(() -> new IllegalArgumentException(String.format(MATCH_DOES_NOT_EXIST, homeTeamName, awayTeamName)));
 
         ongoingMatches.remove(requestedToFinishMatch);
     }
