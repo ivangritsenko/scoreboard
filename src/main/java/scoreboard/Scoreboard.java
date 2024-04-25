@@ -33,6 +33,12 @@ class Scoreboard implements ScoreboardInterface {
         }
     }
 
+    private void checkForNegativeScore(int homeTeamScore, int awayTeamScore) {
+        if (homeTeamScore < 0 || awayTeamScore < 0) {
+            throw new IllegalArgumentException(SCORE_CANNOT_BE_NEGATIVE);
+        }
+    }
+
     private void checkTeamsAreNotTakingPartInOngoingMatch(String homeTeamName, String awayTeamName) {
         //'thereIsOngoingMatchFor' can be called only once. But there is not much ongoing matches at the same time, so for the code simplicity I leave it as it is
         if (thereIsOngoingMatchFor(homeTeamName)) {
@@ -49,19 +55,28 @@ class Scoreboard implements ScoreboardInterface {
                 .anyMatch(match -> match.getHomeTeamName().equalsIgnoreCase(teamName) || match.getAwayTeamName().equalsIgnoreCase(teamName));
     }
 
-    @Override
-    public void updateScore(String homeTeamName, Integer homeTeamScore, String awayTeamName, Integer awayTeamScore) {
+    private Match findMatchBy(String homeTeamName, String awayTeamName) {
+        return ongoingMatches.stream()
+                .filter(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) && match.getAwayTeamName().equalsIgnoreCase(awayTeamName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format(MATCH_DOES_NOT_EXIST, homeTeamName, awayTeamName)));
+    }
 
+    @Override
+    public void updateScore(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore) {
+        checkForNullArguments(homeTeamName, awayTeamName);
+        checkForNegativeScore(homeTeamScore, awayTeamScore);
+
+        Match requestedForScoreUpdateMatch = findMatchBy(homeTeamName, awayTeamName);
+        requestedForScoreUpdateMatch.setHomeTeamScore(homeTeamScore);
+        requestedForScoreUpdateMatch.setAwayTeamScore(awayTeamScore);
     }
 
     @Override
     public void finishMatch(String homeTeamName, String awayTeamName) {
         checkForNullArguments(homeTeamName, awayTeamName);
 
-        Match requestedToFinishMatch = ongoingMatches.stream()
-                .filter(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) && match.getAwayTeamName().equalsIgnoreCase(awayTeamName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(MATCH_DOES_NOT_EXIST, homeTeamName, awayTeamName)));
+        Match requestedToFinishMatch = findMatchBy(homeTeamName, awayTeamName);
 
         ongoingMatches.remove(requestedToFinishMatch);
     }

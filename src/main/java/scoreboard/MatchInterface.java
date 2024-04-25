@@ -11,8 +11,8 @@ public interface MatchInterface {
 
     String getHomeTeamName();
     String getAwayTeamName();
-    Integer getHomeTeamScore();
-    Integer getAwayTeamScore();
+    int getHomeTeamScore();
+    int getAwayTeamScore();
     Date getCreatedOn();
 
 }

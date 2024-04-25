@@ -9,8 +9,8 @@ class Match implements MatchInterface {
 
     private String homeTeamName;
     private String awayTeamName;
-    private Integer homeTeamScore = 0;
-    private Integer awayTeamScore = 0;
+    private int homeTeamScore = 0;
+    private int awayTeamScore = 0;
 
     public Match(String homeTeamName, String awayTeamName) {
         this.homeTeamName = homeTeamName;
@@ -25,12 +25,20 @@ class Match implements MatchInterface {
         return awayTeamName;
     }
 
-    public Integer getHomeTeamScore() {
+    public int getHomeTeamScore() {
         return homeTeamScore;
     }
 
-    public Integer getAwayTeamScore() {
+    void setHomeTeamScore(int homeTeamScore) {
+        this.homeTeamScore = homeTeamScore;
+    }
+
+    public int getAwayTeamScore() {
         return awayTeamScore;
+    }
+
+    void setAwayTeamScore(int awayTeamScore) {
+        this.awayTeamScore = awayTeamScore;
     }
 
     @Override
