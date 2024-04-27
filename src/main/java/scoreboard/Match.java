@@ -6,9 +6,9 @@ import java.util.Objects;
 class Match implements MatchInterface {
 
     private final Date createdOn = new Date();
+    private final String homeTeamName;
+    private final String awayTeamName;
 
-    private String homeTeamName;
-    private String awayTeamName;
     private int homeTeamScore = 0;
     private int awayTeamScore = 0;
 
