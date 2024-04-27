@@ -2,6 +2,7 @@ package scoreboard;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import scoreboard.exception.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ class GetMatchTest {
     }
 
     @Test
-    void givenScoreboardWithTwoMatches_whenGetListOfMatches_thenReceiveTwoMatchesSortedByTotalScore() {
+    void givenScoreboardWithTwoMatches_whenGetListOfMatches_thenReceiveTwoMatchesSortedByTotalScore() throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException, NegativeScoreException, MatchDoesNotExistException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
@@ -38,7 +39,7 @@ class GetMatchTest {
     }
 
     @Test
-    void givenScoreboardWithTwoMatchesWithSameScore_whenGetListOfMatches_thenReceiveTwoMatchesSortedByCreationDate() throws InterruptedException {
+    void givenScoreboardWithTwoMatchesWithSameScore_whenGetListOfMatches_thenReceiveTwoMatchesSortedByCreationDate() throws InterruptedException, NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";

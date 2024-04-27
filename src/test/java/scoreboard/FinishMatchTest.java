@@ -2,6 +2,10 @@ package scoreboard;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import scoreboard.exception.MatchAlreadyExistException;
+import scoreboard.exception.MatchDoesNotExistException;
+import scoreboard.exception.NullTeamNameException;
+import scoreboard.exception.TeamAlreadyHasOngoingMatchException;
 
 import java.util.List;
 
@@ -11,7 +15,7 @@ import static scoreboard.ExceptionMessages.TEAM_NAME_IS_NULL;
 class FinishMatchTest {
 
     @Test
-    void givenScoreboardWithAMatch_whenTryToFinishNotExistingMatch_thenExceptionIsThrown() {
+    void givenScoreboardWithAMatch_whenTryToFinishNotExistingMatch_thenExceptionIsThrown() throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
@@ -22,8 +26,8 @@ class FinishMatchTest {
 
         scoreboard.newMatch(teamA, teamB);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(teamA, teamD)).getMessage();
-        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(teamC, teamD)).getMessage();
+        Assertions.assertThrows(MatchDoesNotExistException.class, () -> scoreboard.finishMatch(teamA, teamD)).getMessage();
+        String actualExceptionMessage = Assertions.assertThrows(MatchDoesNotExistException.class, () -> scoreboard.finishMatch(teamC, teamD)).getMessage();
         List<MatchInterface> actualOngoingMatches = scoreboard.getOngoingMatches();
 
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
@@ -31,7 +35,7 @@ class FinishMatchTest {
     }
 
     @Test
-    void givenScoreboardWithTwoMatches_whenFinishOneMatch_thenOnlyOneOngoingMatchIsLeft() {
+    void givenScoreboardWithTwoMatches_whenFinishOneMatch_thenOnlyOneOngoingMatchIsLeft() throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException, MatchDoesNotExistException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
@@ -52,9 +56,9 @@ class FinishMatchTest {
         Scoreboard scoreboard = new Scoreboard();
         String expectedExceptionMessage = TEAM_NAME_IS_NULL;
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(null, null));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.finishMatch(null, ""));
-        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullTeamNameException.class, () -> scoreboard.finishMatch(null, null));
+        Assertions.assertThrows(NullTeamNameException.class, () -> scoreboard.finishMatch(null, ""));
+        String actualExceptionMessage = Assertions.assertThrows(NullTeamNameException.class,
                 () -> scoreboard.finishMatch("", null)).getMessage();
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }

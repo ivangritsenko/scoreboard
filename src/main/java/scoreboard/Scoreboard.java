@@ -1,16 +1,16 @@
 package scoreboard;
 
+import scoreboard.exception.*;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static scoreboard.ExceptionMessages.*;
 
 class Scoreboard implements ScoreboardInterface {
 
     private List<Match> ongoingMatches = new ArrayList<>();
 
     @Override
-    public void newMatch(String homeTeamName, String awayTeamName) {
+    public void newMatch(String homeTeamName, String awayTeamName) throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         checkForNullArguments(homeTeamName, awayTeamName);
         checkMatchAlreadyExist(homeTeamName, awayTeamName);
         checkTeamsAreNotTakingPartInOngoingMatch(homeTeamName, awayTeamName);
@@ -18,35 +18,35 @@ class Scoreboard implements ScoreboardInterface {
         ongoingMatches.add(new Match(homeTeamName, awayTeamName));
     }
 
-    private void checkMatchAlreadyExist(String homeTeamName, String awayTeamName) {
+    private void checkMatchAlreadyExist(String homeTeamName, String awayTeamName) throws MatchAlreadyExistException {
         boolean matchAlreadyExist = ongoingMatches.stream()
                 .anyMatch(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) || match.getAwayTeamName().equalsIgnoreCase(awayTeamName));
 
         if (matchAlreadyExist) {
-            throw new IllegalArgumentException(String.format(MATCH_ALREADY_EXIST, homeTeamName, awayTeamName));
+            throw new MatchAlreadyExistException(homeTeamName, awayTeamName);
         }
     }
 
-    private void checkForNullArguments(String homeTeamName, String awayTeamName) {
+    private void checkForNullArguments(String homeTeamName, String awayTeamName) throws NullTeamNameException {
         if (homeTeamName == null || awayTeamName == null) {
-            throw new IllegalArgumentException(TEAM_NAME_IS_NULL);
+            throw new NullTeamNameException();
         }
     }
 
-    private void checkForNegativeScore(int homeTeamScore, int awayTeamScore) {
+    private void checkForNegativeScore(int homeTeamScore, int awayTeamScore) throws NegativeScoreException {
         if (homeTeamScore < 0 || awayTeamScore < 0) {
-            throw new IllegalArgumentException(SCORE_CANNOT_BE_NEGATIVE);
+            throw new NegativeScoreException();
         }
     }
 
-    private void checkTeamsAreNotTakingPartInOngoingMatch(String homeTeamName, String awayTeamName) {
+    private void checkTeamsAreNotTakingPartInOngoingMatch(String homeTeamName, String awayTeamName) throws TeamAlreadyHasOngoingMatchException {
         //'thereIsOngoingMatchFor' can be called only once. But there is not much ongoing matches at the same time, so for the code simplicity I leave it as it is
         if (thereIsOngoingMatchFor(homeTeamName)) {
-            throw new IllegalArgumentException(String.format(TEAM_ALREADY_HAS_ONGOING_MATCH, homeTeamName));
+            throw new TeamAlreadyHasOngoingMatchException(homeTeamName);
         }
 
         if (thereIsOngoingMatchFor(awayTeamName)) {
-            throw new IllegalArgumentException(String.format(TEAM_ALREADY_HAS_ONGOING_MATCH, awayTeamName));
+            throw new TeamAlreadyHasOngoingMatchException(awayTeamName);
         }
     }
 
@@ -55,15 +55,15 @@ class Scoreboard implements ScoreboardInterface {
                 .anyMatch(match -> match.getHomeTeamName().equalsIgnoreCase(teamName) || match.getAwayTeamName().equalsIgnoreCase(teamName));
     }
 
-    private Match findMatchBy(String homeTeamName, String awayTeamName) {
+    private Match findMatchBy(String homeTeamName, String awayTeamName) throws MatchDoesNotExistException {
         return ongoingMatches.stream()
                 .filter(match -> match.getHomeTeamName().equalsIgnoreCase(homeTeamName) && match.getAwayTeamName().equalsIgnoreCase(awayTeamName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(MATCH_DOES_NOT_EXIST, homeTeamName, awayTeamName)));
+                .orElseThrow(() -> new MatchDoesNotExistException(homeTeamName, awayTeamName));
     }
 
     @Override
-    public void updateScore(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore) {
+    public void updateScore(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore) throws NullTeamNameException, MatchDoesNotExistException, NegativeScoreException {
         checkForNullArguments(homeTeamName, awayTeamName);
         checkForNegativeScore(homeTeamScore, awayTeamScore);
 
@@ -73,7 +73,7 @@ class Scoreboard implements ScoreboardInterface {
     }
 
     @Override
-    public void finishMatch(String homeTeamName, String awayTeamName) {
+    public void finishMatch(String homeTeamName, String awayTeamName) throws NullTeamNameException, MatchDoesNotExistException {
         checkForNullArguments(homeTeamName, awayTeamName);
 
         Match requestedToFinishMatch = findMatchBy(homeTeamName, awayTeamName);

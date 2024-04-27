@@ -2,6 +2,7 @@ package scoreboard;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import scoreboard.exception.*;
 
 import java.util.List;
 
@@ -14,15 +15,15 @@ class UpdateScoreTest {
         Scoreboard scoreboard = new Scoreboard();
         String expectedExceptionMessage = TEAM_NAME_IS_NULL;
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.updateScore(null, 1,  null, 1));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> scoreboard.updateScore(null, 1, "", 1));
-        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(NullTeamNameException.class, () -> scoreboard.updateScore(null, 1,  null, 1));
+        Assertions.assertThrows(NullTeamNameException.class, () -> scoreboard.updateScore(null, 1, "", 1));
+        String actualExceptionMessage = Assertions.assertThrows(NullTeamNameException.class,
                 () -> scoreboard.updateScore("", 1, null, 1)).getMessage();
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }
 
     @Test
-    void givenScoreboardWithAMatch_whenUpdateScoreForNonExistingMatch_thenExceptionIsThrown() {
+    void givenScoreboardWithAMatch_whenUpdateScoreForNonExistingMatch_thenExceptionIsThrown() throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
@@ -31,13 +32,13 @@ class UpdateScoreTest {
 
         scoreboard.newMatch(teamA, teamB);
 
-       String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class,
+       String actualExceptionMessage = Assertions.assertThrows(MatchDoesNotExistException.class,
                 () -> scoreboard.updateScore(teamA, 1, teamC, 1)).getMessage();
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }
 
     @Test
-    void givenScoreboardWithAMatch_whenUpdateScoreForTheMatchWithNegativeValueArg_thenExceptionIsThrown() {
+    void givenScoreboardWithAMatch_whenUpdateScoreForTheMatchWithNegativeValueArg_thenExceptionIsThrown() throws NullTeamNameException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         Scoreboard scoreboard = new Scoreboard();
@@ -45,13 +46,13 @@ class UpdateScoreTest {
 
         scoreboard.newMatch(teamA, teamB);
 
-        String actualExceptionMessage = Assertions.assertThrows(IllegalArgumentException.class,
+        String actualExceptionMessage = Assertions.assertThrows(NegativeScoreException.class,
                 () -> scoreboard.updateScore(teamA, -1, teamB, 1)).getMessage();
         Assertions.assertEquals(expectedExceptionMessage, actualExceptionMessage);
     }
 
     @Test
-    void givenScoreboardWithAMatch_whenUpdateScoreForTheMatch_thenScoreIsUpdated() {
+    void givenScoreboardWithAMatch_whenUpdateScoreForTheMatch_thenScoreIsUpdated() throws NullTeamNameException, NegativeScoreException, MatchDoesNotExistException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         Scoreboard scoreboard = new Scoreboard();
@@ -67,7 +68,7 @@ class UpdateScoreTest {
     }
 
     @Test
-    void givenScoreboardWithAMatch_whenDecreaseScoreForTheMatch_thenScoreIsUpdated() {
+    void givenScoreboardWithAMatch_whenDecreaseScoreForTheMatch_thenScoreIsUpdated() throws NullTeamNameException, NegativeScoreException, MatchDoesNotExistException, MatchAlreadyExistException, TeamAlreadyHasOngoingMatchException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         Scoreboard scoreboard = new Scoreboard();
