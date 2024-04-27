@@ -25,7 +25,9 @@ class GetMatchTest {
         String teamC = "TeamC";
         String teamD = "TeamD";
         Scoreboard scoreboard = new Scoreboard();
-        List<Match> expectedOngoingMatches = List.of(new Match(teamC, teamB), new Match(teamA, teamD));
+        Match expectedOngoingMatch1 = new Match(teamC, teamB);
+        expectedOngoingMatch1.setHomeTeamScore(1);
+        List<Match> expectedOngoingMatches = List.of(expectedOngoingMatch1, new Match(teamA, teamD));
 
         scoreboard.newMatch(teamA, teamD);
         scoreboard.newMatch(teamC, teamB);
@@ -36,7 +38,7 @@ class GetMatchTest {
     }
 
     @Test
-    void givenScoreboardWithTwoMatchesWithSameScore_whenGetListOfMatches_thenReceiveTwoMatchesSortedByCreationDate() {
+    void givenScoreboardWithTwoMatchesWithSameScore_whenGetListOfMatches_thenReceiveTwoMatchesSortedByCreationDate() throws InterruptedException {
         String teamA = "TeamA";
         String teamB = "TeamB";
         String teamC = "TeamC";
@@ -44,8 +46,10 @@ class GetMatchTest {
         Scoreboard scoreboard = new Scoreboard();
         List<Match> expectedOngoingMatches = List.of(new Match(teamC, teamB), new Match(teamA, teamD));
 
-        scoreboard.newMatch(teamC, teamB);
         scoreboard.newMatch(teamA, teamD);
+        //Thread sleep is required because otherwise Date is same for both matches (Relates to JDK-8196003 I guess)
+        Thread.sleep(200);
+        scoreboard.newMatch(teamC, teamB);
         List<MatchInterface> actualOngoingMatches = scoreboard.getOngoingMatches();
 
         Assertions.assertEquals(expectedOngoingMatches, actualOngoingMatches);

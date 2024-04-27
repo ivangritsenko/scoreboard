@@ -85,7 +85,8 @@ class Scoreboard implements ScoreboardInterface {
     public List<MatchInterface> getOngoingMatches() {
         return ongoingMatches.stream()
                 .sorted(Comparator.comparingInt((Match o) -> o.getAwayTeamScore() + o.getHomeTeamScore())
-                        .thenComparing(Match::getCreatedOn))
+                        .thenComparing(Match::getCreatedOn)
+                        .reversed())
                 .collect(Collectors.toList());
     }
 }

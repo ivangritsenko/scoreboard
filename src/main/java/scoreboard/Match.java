@@ -43,7 +43,7 @@ class Match implements MatchInterface {
 
     @Override
     public Date getCreatedOn() {
-        return Date.from(createdOn.toInstant());
+        return createdOn;
     }
 
     @Override
